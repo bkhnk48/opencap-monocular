@@ -675,6 +675,11 @@ class OptimizePose:
         self.body_pose.requires_grad = True
         self.design_vars.append(self.body_pose)
 
+        """
+        Đoạn mã này làm nhiệm vụ: "Gom tất cả dữ liệu vị trí và góc nhìn của camera lại, tính ra một 
+        trung bình chung (vì camera đứng im), sau đó giao cho PyTorch quyền được thay đổi các con số 
+        này để làm sao cho mô hình 3D khớp với video nhất có thể."
+        """
         # optionally optimize camera
         self.R_world_to_cam = R_world_to_cam[frame_range, :].unsqueeze(0)
         self.t_world_to_cam = t_world_to_cam[frame_range, :].unsqueeze(0)
