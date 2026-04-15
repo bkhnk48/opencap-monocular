@@ -684,11 +684,16 @@ class OptimizePose:
         self.R_world_to_cam = R_world_to_cam[frame_range, :].unsqueeze(0)
         self.t_world_to_cam = t_world_to_cam[frame_range, :].unsqueeze(0)
         if self.optimize_camera:
+            #self.t = Vị trí tọa độ [x, y, z] của camera.
+            #giả định rằng camera của bạn được đặt trên chân đế (tripod) và đứng im
             self.t = torch.mean(self.t_world_to_cam, axis=1).squeeze()  # fixed camera
             self.t_init = self.t.clone()
-            self.t.requires_grad = True
+            self.t.requires_grad = True#đây là một biến số chưa hoàn hảo. Hãy tính đạo hàm (gradient) 
+            #cho nó và liên tục cập nhật nó cho đến khi tìm được vị trí tốt nhất".
             self.design_vars.append(self.t)
 
+            #thư viện kornia để chuyển Ma trận này thành Quaternion (một dạng biểu diễn góc 
+            # xoay 4 chiều bằng số ảo, rất phổ biến trong lập trình game và robot)
             self.quat = torch.mean(
                 conversions.rotation_matrix_to_quaternion(
                     R_world_to_cam[frame_range, :, :]
@@ -696,8 +701,8 @@ class OptimizePose:
                 axis=0,
             )  # fixed camera
             self.quat_init = self.quat.clone()
-            self.quat.requires_grad = True
-            self.design_vars.append(self.quat)
+            self.quat.requires_grad = True #bật tự động tính đạo hàm (requires_grad=True) 
+            self.design_vars.append(self.quat)#và đưa vào danh sách cần tối ưu (design_vars).
 
         # Precomputed values (must be at end of init)
         if "reprojection" in self.weights and self.weights["reprojection"] > 0:
