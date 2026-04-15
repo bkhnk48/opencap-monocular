@@ -102,6 +102,7 @@ class OptimizeExtrinsics:
         self.early_stop_rel_improvement_pct = 1.0
         self.static_cam = static_cam
 
+        #ma trận chứa tọa độ các điểm khớp (như khuỷu tay, đầu gối, mắt cá...) được nhận diện từ video gốc.
         self.key2d_image = key2d_image[frame_range, :, :].unsqueeze(0)
         self.key3d = key3d_smpl[frame_range, :, :].unsqueeze(
             0
