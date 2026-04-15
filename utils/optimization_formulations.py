@@ -169,6 +169,9 @@ class OptimizeExtrinsics:
 
         # Precomputed values (must be at end of init)
         if "reprojection" in self.weights:
+            #confidence (độ tự tin/độ tin cậy của AI khi nhận diện điểm). Lệnh này tách riêng điểm số tự tin ra. 
+            # Lệnh .repeat(1, 1, 1, 2) nhân đôi giá trị này lên để lát nữa áp dụng riêng cho cả trục X và trục Y. 
+            # (Nếu bị tay che lấp, độ tự tin = 0, thuật toán sẽ lờ điểm này đi).
             self.confidence_selected_keypoints = (
                 self.key2d_image[:, :, keypoints_to_use, 2]
                 .unsqueeze(-1)
