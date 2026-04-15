@@ -573,8 +573,12 @@ class OptimizePose:
         self.smpl_model = smpl_model
         self.beta = beta
 
+        #Đoạn mã dưoi đay nạp và xử lý các thông số về độ méo hình ảnh do ống kính camera (Camera Distortion).
+        #Trong thực tế, không có ống kính camera nào là hoàn hảo. Khi ánh sáng đi qua thấu kính, hình ảnh thu được thường bị 
+        #méo so với thực tế (ví dụ: các đường thẳng ở rìa bức ảnh bị cong lại). Đoạn mã này chuẩn bị các biến toán học để mô phỏng lại chính xác sự méo mó đó.
         # distortion
         if "k1" in intrinsics:
+            #Radial Distortion - Méo xuyên tâm
             self.cam_distortion_k = (
                 torch.tensor(
                     [intrinsics["k1"], intrinsics["k2"], intrinsics["k3"]],
@@ -587,6 +591,7 @@ class OptimizePose:
         else:
             self.cam_distortion_k = None
         if "p1" in intrinsics:
+            #Tangential Distortion - Méo tiếp tuyến
             self.cam_distortion_p = (
                 torch.tensor(
                     [intrinsics["p1"], intrinsics["p2"]],
@@ -610,12 +615,12 @@ class OptimizePose:
         # Original: self.foot_names = ["LBigToe", "LHeel", "RBigToe", "RHeel", "LSmallToe", "RSmallToe"]
         # Now including small toes by copying big toe values
         self.foot_names = [
-            "LBigToe",
-            "LHeel",
-            "RBigToe",
-            "RHeel",
-            "LSmallToe",
-            "RSmallToe",
+            "LBigToe",   #Ngón chân cái bên trái (Left)
+            "LHeel",     #Gót chân bên trái
+            "RBigToe",   #Ngón chân cái bên phải (Right).
+            "RHeel",     #Gót chân bên phải.
+            "LSmallToe", #Ngón chân út bên trái
+            "RSmallToe", #Ngón chân út bên phải.
         ]
         self.foot_keypoints = [
             OPENPOSE_VERTICES_NAME.index(foot) for foot in self.foot_names
