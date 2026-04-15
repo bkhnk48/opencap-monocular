@@ -536,7 +536,10 @@ class OptimizePose:
         """
 
         self.device = R_world_to_cam.device
-
+        """
+        Kiểm tra xem người dùng có truyền vào một danh sách các khung hình cụ thể nào không. 
+        Nếu không truyền (None), mặc định là sẽ xử lý toàn bộ video.
+        """
         if frame_range is None:
             frame_range = range(t_world_to_cam.shape[0])
             # minus 1 because of 0 indexing
@@ -547,7 +550,7 @@ class OptimizePose:
         self.conv_tol = 0.001
         self.early_stop_patience = 5
         self.early_stop_rel_improvement_pct = 1.0
-
+        #mặc định sử dụng frame_rate = 30fps
         if frame_rate is None:
             self.frame_rate = 30
         else:
@@ -557,8 +560,10 @@ class OptimizePose:
         self.video_path = video_path
         self.frame_ids = frame_ids
         self.create_contact_visualizations = create_contact_visualizations
-
+        #ma trận chứa tọa độ các điểm khớp (như khuỷu tay, đầu gối, mắt cá...) được nhận diện từ video gốc
         self.key2d_image = key2d_image[frame_range, :, :].unsqueeze(0)
+        #hai thông số cam_center và cam_f đưa vào bộ nhớ của CPU hoặc GPU (device=self.device) và reshape để sẵn sàng tính toán. 
+        #Thuật toán cần tiêu cự và tâm ảnh để biết cách "chiếu" người 3D lên mặt phẳng 2D sao cho chính xác nhất.
         self.cam_center = torch.tensor(
             [intrinsics["cx"], intrinsics["cy"]], dtype=torch.float32, device=self.device
         ).reshape(1, 2)
