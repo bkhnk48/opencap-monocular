@@ -107,7 +107,8 @@ class OptimizeExtrinsics:
         self.key3d = key3d_smpl[frame_range, :, :].unsqueeze(
             0
         )  # only one body for now (T,N,3) -> (B, T, N, 3)
-
+        #đưa vào bộ nhớ của CPU hoặc GPU (device=self.device) và định hình lại (reshape) để sẵn sàng tính toán. 
+        #Thuật toán cần tiêu cự và tâm ảnh để biết cách "chiếu" người 3D lên mặt phẳng 2D sao cho chính xác nhất.
         self.cam_center = torch.tensor(
             [intrinsics["cx"], intrinsics["cy"]], dtype=torch.float32, device=self.device
         ).reshape(1, 2)
