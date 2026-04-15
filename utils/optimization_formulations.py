@@ -88,7 +88,10 @@ class OptimizeExtrinsics:
         # preallocate design vars list
         self.design_vars = []
         self.device = R_world_to_cam_init.device
-
+        """
+        Kiểm tra xem người dùng có truyền vào một danh sách các khung hình cụ thể nào không. 
+        Nếu không truyền (None), mặc định là sẽ xử lý toàn bộ video.
+        """
         if frame_range is None:
             frame_range = range(t_world_to_cam_init.shape[0])
         self.n_frames = len(frame_range)
